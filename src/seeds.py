@@ -1,88 +1,121 @@
-from models import db, Users, Chats
+from models import db, Chats, Messages, Invites
+from datetime import datetime, timedelta
+
 def run():
 
     #Arrange the deletes in the opposite order of the models
+    Invites.query.delete()
+    Messages.query.delete()
     Chats.query.delete()
-    Users.query.delete()
     
     # MYSQL database for gitpod
+    db.session.execute("ALTER TABLE invites AUTO_INCREMENT = 1")
+    db.session.execute("ALTER TABLE messages AUTO_INCREMENT = 1")
     db.session.execute("ALTER TABLE chats AUTO_INCREMENT = 1")
-    db.session.execute("ALTER TABLE users AUTO_INCREMENT = 1")
 
-    db.session.execute("ALTER TABLE Chats ADD CONSTRAINT user1_username_username FOREIGN KEY (user1_username) REFERENCES USERS(username)")
-    db.session.execute("ALTER TABLE Chats ADD CONSTRAINT user1_username_username FOREIGN KEY (user2_username) REFERENCES USERS(username)")
- 
     # POSTGRES database for heroku
+    # db.session.execute("ALTER SEQUENCE messages_id_seq RESTART")
     # db.session.execute("ALTER SEQUENCE chats_id_seq RESTART")
-    # db.session.execute("ALTER SEQUENCE users_id_seq RESTART")
+
+    db.session.add(Chats())
+    db.session.add(Chats())
+    db.session.add(Chats())
+    db.session.add(Chats())
+    db.session.add(Chats())
+    db.session.add(Chats())
+
+    now = datetime.utcnow()
 
 
     ##################
-    #     USERS
+    #     INVITES
     ##################
-    Issac = Users(
-        username = 'kolis10'
-    )
-    db.session.add(Issac)
-    Naz = Users(
-        username = 'Naz'
-    )
-    db.session.add(Naz)
-    Chouerlee = Users(
-        username = 'Curly-Fry'
-    )
-    db.session.add(Chouerlee)
-    Zion = Users(
-        username = 'Coder'
-    )
-    db.session.add(Zion)
-    Rajae = Users(
-        username = 'Rager'
-    )
-    db.session.add(Rajae)
-    Anthony = Users(
-        username = 'Tony'
-    )
-    db.session.add(Anthony)
+    db.session.add(Invites(
+        chat_id = 1,
+        username = "Naz"
+    ))
+    db.session.add(Invites(
+        chat_id = 1,
+        username = "koLiS10"
+    ))
+
 
     ##################
-    #     CHATS
+    #     MESSAGES
     ##################
-    db.session.add(Chats(
-        user1_username = Chouerlee,
-        user2_username = Anthony,
-        writer_username = Chouerlee,
-        message = "'Sup"
+    db.session.add(Messages(
+        chat_id = 1,
+        writer_username = "kolis10",
+        message = "'Sup",
+        created_at = now
     ))
-    db.session.add(Chats(
-        user1_username = Issac,
-        user2_username = Naz,
-        writer_username = Issac,
-        message = "Hey"
+    db.session.add(Messages(
+        chat_id = 2,
+        writer_username = "Naz",
+        message = "Konichiwa",
+        created_at = now
     ))
-    db.session.add(Chats(
-        user1_username = Naz,
-        user2_username = Zion,
-        writer_username = Naz,
-        message = "Konichiwa"
+    db.session.add(Messages(
+        chat_id = 3,
+        writer_username = "Curly-Fry",
+        message = "Hey",
+        created_at = now
     ))
-    db.session.add(Chats(
-        user1_username = Zion,
-        user2_username = Rajae,
-        writer_username = Zion,
-        message = "Dude"
+    db.session.add(Messages(
+        chat_id = 4,
+        writer_username = "Coder",
+        message = "Dude",
+        created_at = now
     ))
-    db.session.add(Chats(
-        user1_username = Rajae,
-        user2_username = Chouerlee,
-        writer_username = Rajae,
-        message = "Yo"
+    db.session.add(Messages(
+        chat_id = 5,
+        writer_username = "Rager",
+        message = "Yo",
+        created_at = now
     ))
-    db.session.add(Chats(
-        user1_username = Anthony,
-        user2_username = Issac,
-        writer_username = Anthony,
-        message = "Hi"
+    db.session.add(Messages(
+        chat_id = 6,
+        writer_username = "Tony",
+        message = "Hi",
+        created_at = now
     ))
+    ############################################
+    db.session.add(Messages(
+        chat_id = 1,
+        writer_username = "Naz",
+        message = "Konichiwa, kolis10",
+        created_at = now + timedelta(minutes=2)
+    ))
+    db.session.add(Messages(
+        chat_id = 2,
+        writer_username = "kolis10",
+        message = "'Sup, Naz",
+        created_at = now + timedelta(minutes=2)
+    ))
+    db.session.add(Messages(
+        chat_id = 3,
+        writer_username = "Tony",
+        message = "Hi, Curly-Fry",
+        created_at = now + timedelta(minutes=2)
+    ))
+    db.session.add(Messages(
+        chat_id = 4,
+        writer_username = "Rager",
+        message = "Yo, Coder",
+        created_at = now + timedelta(minutes=2)
+    ))
+    db.session.add(Messages(
+        chat_id = 5,
+        writer_username = "Coder",
+        message = "Dude, Rager",
+        created_at = now + timedelta(minutes=2)
+    ))
+    db.session.add(Messages(
+        chat_id = 6,
+        writer_username = "Curly-Fry",
+        message = "Hey, Tony",
+        created_at = now + timedelta(minutes=2)
+    ))
+    
     db.session.commit()
     return 'seeds ran successfully'
